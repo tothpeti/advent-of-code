@@ -25,7 +25,7 @@ object Day1 extends IOApp.Simple {
         .sum
     }
 
-  private def processedInput(path: String): IO[List[Int]] =
+  private def processInput(path: String): IO[List[Int]] =
     Files[IO]
       .readUtf8Lines(Path(path))
       .split(_ == "")
@@ -37,14 +37,14 @@ object Day1 extends IOApp.Simple {
     // Part 1 solution
     /*
     for {
-      list <- processedInput(part1Path)
+      list <- processInput(part1Path)
       _    <- IO(println(list.max))
     } yield ()
      */
 
     // Part 2 solution
     for {
-      list <- processedInput(part2Path)
+      list <- processInput(part2Path)
       res  <- getTopKhighestCalories(list, 3)
       _    <- IO(println(res))
     } yield ()
