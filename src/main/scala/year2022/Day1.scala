@@ -10,7 +10,7 @@ object Day1 extends IOApp.Simple {
   // private val part1Path = "src/main/resources/year2022/day1/part1.txt"
   private val part2Path = "src/main/resources/year2022/day1/part2.txt"
 
-  private def calculateSumOfCaloriesByChunks(calories: Chunk[String]): IO[Int] =
+  private def calculateSumOfCalories(calories: Chunk[String]): IO[Int] =
     IO {
       calories
         .map(_.toInt)
@@ -29,7 +29,7 @@ object Day1 extends IOApp.Simple {
     Files[IO]
       .readUtf8Lines(Path(path))
       .split(_ == "")
-      .evalMap(calculateSumOfCaloriesByChunks)
+      .evalMap(calculateSumOfCalories)
       .compile
       .toList
 
