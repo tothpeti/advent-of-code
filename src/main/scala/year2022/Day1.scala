@@ -1,5 +1,6 @@
 package year2022
 
+import cats.implicits._
 import cats.effect.{IO, IOApp}
 import fs2.Chunk
 import fs2.io.file.{Files, Path}
@@ -14,7 +15,7 @@ object Day1 extends IOApp.Simple {
     IO {
       calories
         .map(_.toInt)
-        .foldLeft(0)(_ + _)
+        .combineAll
     }
 
   private def getTopKhighestCalories(calories: List[Int], k: Int): IO[Int] =
