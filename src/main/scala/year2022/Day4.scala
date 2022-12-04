@@ -15,7 +15,7 @@ object Day4 extends IOApp.Simple {
   final case class Assignment(first: Elf, second: Elf)
 
   implicit class AssignmentOps(assignment: Assignment) {
-    def intersect(): Boolean = {
+    def subset(): Boolean = {
       val firstElf  = assignment.first
       val secondElf = assignment.second
 
@@ -46,7 +46,7 @@ object Day4 extends IOApp.Simple {
 
   private def countIntersections(assignments: List[Assignment]): Int =
     assignments
-      .count(_.intersect())
+      .count(_.subset())
 
   private def countOverlaps(assignments: List[Assignment]): Int =
     assignments
