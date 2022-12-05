@@ -1,15 +1,17 @@
 package year2022
 
+import cats.implicits._
 import cats.effect.{IO, IOApp}
 import fs2.Pipe
 import fs2.io.file.{Files, Path}
 
 import scala.annotation.tailrec
+import scala.collection.immutable.SortedMap
 
 object Day5 extends IOApp.Simple {
   // private val testPath = "src/main/resources/year2022/day5/test.txt"
   private val part1Path = "src/main/resources/year2022/day5/part1.txt"
-  // private val part2Path = "src/main/resources/year2022/day5/part2.txt"
+  private val part2Path = "src/main/resources/year2022/day5/part2.txt"
 
   implicit class ListOps[A](list: List[A]) {
     def pop(amount: Int): (List[A], List[A]) = {
@@ -31,28 +33,15 @@ object Day5 extends IOApp.Simple {
 
   /* For Test */
   /*
-  private val containersMap = Map(
+  private val containersMap = SortedMap(
     1 -> List("N", "Z"),
     2 -> List("D", "C", "M"),
     3 -> List("P")
   )
-
    */
 
-  /*
-                [B] [L]     [J]
-            [B] [Q] [R]     [D] [T]
-            [G] [H] [H] [M] [N] [F]
-        [J] [N] [D] [F] [J] [H] [B]
-    [Q] [F] [W] [S] [V] [N] [F] [N]
-[W] [N] [H] [M] [L] [B] [R] [T] [Q]
-[L] [T] [C] [R] [R] [J] [W] [Z] [L]
-[S] [J] [S] [T] [T] [M] [D] [B] [H]
- 1   2   3   4   5   6   7   8   9
-   */
-
-  /* For Part1 */
-  private val containersMap = Map(
+  /* For Part1 & Part2 */
+  private val containersMap = SortedMap(
     1 -> List("W", "L", "S"),
     2 -> List("Q", "N", "T", "J"),
     3 -> List("J", "F", "H", "C", "S"),
@@ -80,11 +69,13 @@ object Day5 extends IOApp.Simple {
         )
     }.mkString("")
 
-  private def rearrange(moves: List[Move]): Map[Int, List[String]] =
+  private def rearrange(moves: List[Move], sort: Boolean): Map[Int, List[String]] =
     moves
       .foldLeft(containersMap) { (seed, current) =>
         val (poppedContainers, remaining) = seed(current.from).pop(current.quantity)
-        val updatedContainers             = poppedContainers ::: seed(current.to)
+        val updatedContainers =
+          if (sort) poppedContainers.reverse ::: seed(current.to)
+          else poppedContainers ::: seed(current.to)
 
         seed
           .updated(current.from, remaining)
@@ -103,8 +94,13 @@ object Day5 extends IOApp.Simple {
   override def run: IO[Unit] =
     for {
       list <- process(part1Path)
-                .map(rearrange)
+                .map(moves => rearrange(moves, sort = false))
                 .map(retrieveTopContainers)
       _ <- IO(println(list))
+      list2 <- process(part2Path)
+                 .map(moves => rearrange(moves, sort = true))
+                 .map(retrieveTopContainers)
+      _ <- IO(println(list2))
     } yield ()
+
 }
