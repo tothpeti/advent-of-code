@@ -23,11 +23,11 @@ object Day7 extends IOApp.Simple {
         case head :: tail =>
           head.split(" ") match {
             case Array(_, _, "/")    => helper(tail, List.empty, sizes)
-            case Array(_, _, "..")   => helper(tail, stack.init, sizes)
-            case Array(_, _, folder) => helper(tail, stack :+ folder, sizes)
+            case Array(_, _, "..")   => helper(tail, stack.tail, sizes)
+            case Array(_, _, folder) => helper(tail, folder :: stack, sizes)
             case Array(size, _) if size.forall(Character.isDigit) =>
               val sizesUpdated = (0 to stack.size).foldLeft(sizes) { (seed, elem) =>
-                val path = "/" + stack.take(elem).mkString("/")
+                val path = "/" + stack.takeRight(elem).mkString("/")
                 seed.updated(path, seed.getOrElse(path, 0) + size.toInt)
               }
               helper(tail, stack, sizesUpdated)
